@@ -1,11 +1,11 @@
-//Header(s)
+/* Header(s) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
 
-//Constant(s)
+/* Constant(s) */
 #define SET -2
 #define NOTSET -1
 #define UNUSED_INDEX 0
@@ -19,30 +19,30 @@
     --TEST ENTIRE THING
 */
 
-//Struct(s)
+/* Struct(s) */
 struct instruction
 {
-    int op; //Opcode
-    int l;  //Lexicographical Level
-    int m;  //Modifier
+    int op; /* Opcode */
+    int l;  /* Lexicographical Level */
+    int m;  /* Modifier */
 };
 
-//Global Variable(s)
-struct instruction code[MAX_CODE_LENGTH];       //Array of Instructions
-int stack[MAX_STACK_HEIGHT];                    //Array of Integers for the stack
-struct instruction ir;                          //Instruction Register
-int pc = 0;                                     //Program Counter
-int bp = 1;                                     //Base Pointer
-int sp = 0;                                     //Stack Pointer
+/* Global Variable(s) */
+struct instruction code[MAX_CODE_LENGTH];       /* Array of Instructions */
+int stack[MAX_STACK_HEIGHT];                    /* Array of Integers for the stack */
+struct instruction ir;                          /* Instruction Register */
+int pc = 0;                                     /* Program Counter */
+int bp = 1;                                     /* Base Pointer */
+int sp = 0;                                     /* Stack Pointer */
 
 bool firstInst = true;
-int instructCount;                              //Counter to hold the amount of instructions read into memory
+int instructCount;                              /* Counter to hold the amount of instructions read into memory */
 int new_ar[MAX_STACK_HEIGHT];
 int tempSp = NOTSET;
 FILE* stream;
 
 
-//Function Declaration(s)/Prototype(s)
+/* Function Declaration(s)/Prototype(s) */
 void initialize(void);
 void readInstructions(void);
 void printInterpretedInst(void);
@@ -55,15 +55,15 @@ void readItemToStack(void);
 int base(int, int);
 void setNewAr(int);
 
-//Main
+/* Main */
 int main(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     bool flag = true;
     stream = fopen("vmoutput.txt", "w");
 
-    initialize();  //Initialize Stack
-    readInstructions(); //Read Instructions from input file
+    initialize();  /* Initialize Stack */
+    readInstructions(); /* Read Instructions from input file */
     printInterpretedInst();
 
     printf("\t\t\t\t\tPC\tBP\tSP\tStack\n");fprintf(stream,"\t\t\t\t\tPC\tBP\tSP\tStack\n");
@@ -77,13 +77,13 @@ int main(void)
 
     printf("%d\t%d\t%d\n", pc, bp, sp);fprintf(stream,"%d\t%d\t%d\n", pc, bp, sp);
 
-   return;
-}//END main
+   return 0;
+}/* END main */
 
-//Function(s)
+/* Function(s) */
 void initialize(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i;
 
     for(i = 0; i < MAX_STACK_HEIGHT; i++)
@@ -93,52 +93,52 @@ void initialize(void)
     }
 
     return;
-}//END initializeStack
+}/* END initializeStack */
 
 void readInstructions(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i = 0;
 
     FILE* stream = fopen("vminput.txt", "r");
 
-    if(stream == NULL)//Failed to Open
+    if(stream == NULL)/* Failed to Open */
     {
-        fclose(stream); //Close the file
+        fclose(stream); /* Close the file */
         return;
     }
 
     while((fscanf(stream, "%d %d %d", &code[i].op, &code[i].l, &code[i].m)) == 3)
     {
-        //Read File and Store the instructions appropriately
+        /* Read File and Store the instructions appropriately */
         i++;
     }
 
     instructCount = i;
-    fclose(stream);//Close the file
+    fclose(stream);/* Close the file */
 
     return;
-}//END readInstructions
+}/* END readInstructions */
 
 void printInterpretedInst(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i;
 
-    printf("Line\tOP\tL\tM\n");fprintf(stream,"Line\tOP\tL\tM\n");//Print Headers
+    printf("Line\tOP\tL\tM\n");fprintf(stream,"Line\tOP\tL\tM\n"); /* Print Headers */
 
     for(i = 0; i < instructCount; i++)
     {
-        printf("%d\t%s\t%d\t%d\n", i, translateOp(code[i].op), code[i].l, code[i].m);//Print out Interpreted Instruction for each Opcode
+        printf("%d\t%s\t%d\t%d\n", i, translateOp(code[i].op), code[i].l, code[i].m); /* Print out Interpreted Instruction for each Opcode */
         fprintf(stream,"%d\t%s\t%d\t%d\n", i, translateOp(code[i].op), code[i].l, code[i].m);
     }
 
     printf("\n\n");fprintf(stream,"\n\n");
-}//END printInterpretedInst
+}/* END printInterpretedInst */
 
 void printStack(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i;
     int j;
 
@@ -165,11 +165,11 @@ void printStack(void)
         tempSp = NOTSET;
     }
 
-}//END printStack
+}/* END printStack */
 
 void setNewAr(int loc)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i;
 
     for(i=0; i<MAX_STACK_HEIGHT; i++)
@@ -181,11 +181,11 @@ void setNewAr(int loc)
         }
     }
 
-}//end setNewAr
+}/* end setNewAr */
 
 void removeAr(void)
 {
-    //Local Variable(s)
+    /* Local Variable(s) */
     int i;
 
     for(i=0; i<MAX_STACK_HEIGHT; i++)
@@ -199,11 +199,11 @@ void removeAr(void)
         }
     }
 
-}//END removeAr
+}/* END removeAr */
 
 void fetch(void)
 {
-    //Print Values after execution of previous instruction and before fetch of next instruction
+    /* Print Values after execution of previous instruction and before fetch of next instruction */
     if(firstInst == false)
     {
         printf("%d\t%d\t%d\t", pc, bp, sp);fprintf(stream, "%d\t%d\t%d\t", pc, bp, sp);
@@ -211,72 +211,72 @@ void fetch(void)
         printf("\n"); fprintf(stream, "\n");
     }
 
-    //Get Instruction Information
+    /* Get Instruction Information */
     ir.op = code[pc].op;
     ir.l = code[pc].l;
     ir.m = code[pc].m;
 
-    //Print values before execution
+    /* Print values before execution */
     printf("%d\t%s\t%d\t%d\t\t", pc, translateOp(ir.op), ir.l, ir.m);
     fprintf(stream, "%d\t%s\t%d\t%d\t\t", pc, translateOp(ir.op), ir.l, ir.m);
 
-    //Increment PC by 1
+    /* Increment PC by 1 */
     pc = pc +1;
 
     firstInst = false;
     return;
-}//END fetch
+}/* END fetch */
 
 bool execute(void)
 {
     switch(ir.op)
     {
         case 1:
-            //LIT(eral)
+            /* LIT(eral) */
             sp += 1;
             stack[sp] = ir.m;
             break;
         case 2:
-            //OPR(Operation)
+            /* OPR(Operation) */
             executeModifier();
             break;
         case 3:
-            //LOD(Load)
+            /* LOD(Load) */
             sp += 1;
             stack[sp] = stack[base(ir.l, bp) + ir.m];
             break;
         case 4:
-            //STO(Store)
+            /* STO(Store) */
             stack[(base(ir.l, bp)) + ir.m] = stack[sp];
             sp -= 1;
             break;
         case 5:
-            //CAL(Call Function)
-            stack[sp + 1] = 0;              //Space to Return a Value if needed
-            stack[sp + 2] = base(ir.l, bp); //Static Link
-            stack[sp + 3] = bp;             //Dynamic Link
-            stack[sp + 4] = pc;             //Return Address
-            bp = (sp + 1);                  //Move Base Pointer up
-            pc = ir.m;                      //Set PC to the location of called function
+            /* CAL(Call Function) */
+            stack[sp + 1] = 0;              /* Space to Return a Value if needed */
+            stack[sp + 2] = base(ir.l, bp); /* Static Link */
+            stack[sp + 3] = bp;             /* Dynamic Link */
+            stack[sp + 4] = pc;             /* Return Address */
+            bp = (sp + 1);                  /* Move Base Pointer up */
+            pc = ir.m;                      /* Set PC to the location of called function */
             setNewAr(sp+1); tempSp = SET;
             break;
         case 6:
-            //INC(Allocate M Locals on Stack)
+            /* INC(Allocate M Locals on Stack) */
             sp = (sp + ir.m);
             break;
         case 7:
-            //JMP(Jump)
+            /* JMP(Jump) */
             pc = ir.m;
             break;
         case 8:
-            //JPC (Jump if Top of Stack == 0)
+            /* JPC (Jump if Top of Stack == 0) */
             if(stack[sp] == 0)
                 pc = ir.m;
 
             sp -= 1;
             break;
         case 9:
-            //SIO(Write Stack, Read Stack, HALT)
+            /* SIO(Write Stack, Read Stack, HALT) */
             if(ir.m == 1)
             {
                 printf("Top Item in Stack: (%d)\n", stack[sp]);
@@ -299,54 +299,54 @@ bool execute(void)
     }
 
     return true;
-}//END execute
+}/* END execute */
 
 void executeModifier(void)
 {
     switch(ir.m)
     {
         case 0:
-            //RET
+            /* RET */
             sp = bp - 1;
             pc = stack[sp + 4];
             bp = stack[sp + 3];
             removeAr();
             break;
         case 1:
-            //NEG
+            /* NEG */
             stack[sp] = -stack[sp];
             break;
         case 2:
-            //ADD
+            /* ADD */
             sp -= 1;
             stack[sp] = (stack[sp] + stack[sp + 1]);
             break;
         case 3:
-            //SUB
+            /* SUB */
             sp -= 1;
             stack[sp] = (stack[sp] - stack[sp + 1]);
             break;
         case 4:
-            //MUL
+            /* MUL */
             sp -= 1;
             stack[sp] = (stack[sp] * stack[sp + 1]);
             break;
         case 5:
-            //DIV
+            /* DIV */
             sp -= 1;
             stack[sp] = (stack[sp] / stack[sp + 1]);
             break;
         case 6:
-            //ODD
+            /* ODD */
             stack[sp] = (stack[sp] % 2);
             break;
         case 7:
-            //MOD
+            /* MOD */
             sp -= 1;
             stack[sp] = (stack[sp] % stack[sp + 1]);
             break;
         case 8:
-            //EQL
+            /* EQL */
             sp -= 1;
 
             if(stack[sp] == stack[sp + 1])
@@ -356,7 +356,7 @@ void executeModifier(void)
 
             break;
         case 9:
-            //NEQ
+            /* NEQ */
             sp -= 1;
 
             if(stack[sp] != stack[sp + 1])
@@ -366,7 +366,7 @@ void executeModifier(void)
 
             break;
         case 10:
-            //LSS
+            /* LSS */
             sp -= 1;
 
             if(stack[sp] < stack[sp + 1])
@@ -376,7 +376,7 @@ void executeModifier(void)
 
             break;
         case 11:
-            //LEQ
+            /* LEQ */
             sp -= 1;
 
             if(stack[sp] <= stack[sp + 1])
@@ -386,7 +386,7 @@ void executeModifier(void)
 
             break;
         case 12:
-            //GTR
+            /* GTR */
             sp -= 1;
 
             if(stack[sp] > stack[sp + 1])
@@ -396,7 +396,7 @@ void executeModifier(void)
 
             break;
         case 13:
-            //GEQ
+            /* GEQ */
             sp -= 1;
 
             if(stack[sp] >= stack[sp + 1])
@@ -410,16 +410,16 @@ void executeModifier(void)
     }
 
     return;
-}//END executeModifier
+}/* END executeModifier */
 
 void readItemToStack(void)
 {
     printf("Please enter an Integer to be placed into the TOP of the STACK: ");
-    scanf("%d", stack[sp]);
+    scanf("%d", &stack[sp]);
     printf("\n");
-}//END readStack
+}/* END readStack */
 
-int base(int L, int base) // l stand for L in the instruction format
+int base(int L, int base) /*  l stand for L in the instruction format */
 {
     int bl;
 
@@ -432,46 +432,46 @@ int base(int L, int base) // l stand for L in the instruction format
     }
 
     return bl;
-}//END base
+}/* END base */
 
 char* translateOp(int opcode)
 {
     switch(opcode)
     {
         case 1:
-            //LIT(eral)
+            /* LIT(eral) */
             return "LIT";
             break;
         case 2:
-            //OPR(Operation)
+            /* OPR(Operation) */
             return "OPR";
             break;
         case 3:
-            //LOD(Load)
+            /* LOD(Load) */
             return "LOD";
             break;
         case 4:
-            //STO(Store)
+            /* STO(Store) */
             return "STO";
             break;
         case 5:
-            //CAL(Call Function)
+            /* CAL(Call Function) */
             return "CAL";
             break;
         case 6:
-            //INC(Allocate M Locals on Stack)
+            /* INC(Allocate M Locals on Stack) */
             return "INC";
             break;
         case 7:
-            //JMP(Jump)
+            /* JMP(Jump) */
             return "JMP";
             break;
         case 8:
-            //JPC (Jump if Top of Stack == 0)
+            /* JPC (Jump if Top of Stack == 0) */
             return "JPC";
             break;
         case 9:
-            //SIO(Write Stack, Read Stack, HALT)
+            /* SIO(Write Stack, Read Stack, HALT) */
             return "SIO";
             break;
         default:
@@ -479,4 +479,4 @@ char* translateOp(int opcode)
             break;
     }
 
-}//END translateOp
+}/* END translateOp */

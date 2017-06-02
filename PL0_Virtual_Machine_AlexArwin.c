@@ -39,6 +39,7 @@ bool firstInst = true;
 int instructCount;                              //Counter to hold the amount of instructions read into memory
 int new_ar[MAX_STACK_HEIGHT];
 int tempSp = NOTSET;
+FILE* stream;
 
 
 //Function Declaration(s)/Prototype(s)
@@ -59,13 +60,14 @@ int main(void)
 {
     //Local Variable(s)
     bool flag = true;
+    stream = fopen("vmoutput.txt", "w");
 
     initialize();  //Initialize Stack
     readInstructions(); //Read Instructions from input file
     printInterpretedInst();
 
-    printf("\t\t\t\t\tPC\tBP\tSP\tStack\n");
-    printf("Initial Values\t\t\t\t%d\t%d\t%d\n", pc, bp, sp);
+    printf("\t\t\t\t\tPC\tBP\tSP\tStack\n");fprintf(stream,"\t\t\t\t\tPC\tBP\tSP\tStack\n");
+    printf("Initial Values\t\t\t\t%d\t%d\t%d\n", pc, bp, sp);fprintf(stream,"Initial Values\t\t%d\t%d\t%d\n", pc, bp, sp);
 
     while(flag == true)
     {
@@ -73,7 +75,7 @@ int main(void)
         flag = execute();
     }
 
-    printf("%d\t%d\t%d\n", pc, bp, sp);
+    printf("%d\t%d\t%d\n", pc, bp, sp);fprintf(stream,"%d\t%d\t%d\n", pc, bp, sp);
 
    return;
 }//END main
@@ -123,14 +125,15 @@ void printInterpretedInst(void)
     //Local Variable(s)
     int i;
 
-    printf("Line\tOP\tL\tM\n");//Print Headers
+    printf("Line\tOP\tL\tM\n");fprintf(stream,"Line\tOP\tL\tM\n");//Print Headers
 
     for(i = 0; i < instructCount; i++)
     {
         printf("%d\t%s\t%d\t%d\n", i, translateOp(code[i].op), code[i].l, code[i].m);//Print out Interpreted Instruction for each Opcode
+        fprintf(stream,"%d\t%s\t%d\t%d\n", i, translateOp(code[i].op), code[i].l, code[i].m);
     }
 
-    printf("\n\n");
+    printf("\n\n");fprintf(stream,"\n\n");
 }//END printInterpretedInst
 
 void printStack(void)
@@ -145,20 +148,20 @@ void printStack(void)
         {
             if(new_ar[j] == i)
             {
-                printf("| ");
+                printf("| ");fprintf(stream, "| ");
             }
         }
 
-        printf("%d ",stack[i]);
+        printf("%d ",stack[i]);fprintf(stream, "%d ", stack[i]);
     }
 
     if(tempSp == SET)
     {
-        printf("| ");
-        printf("%d ",stack[i]);
-        printf("%d ",stack[i+1]);
-        printf("%d ",stack[i+2]);
-        printf("%d ",stack[i+3]);
+        printf("| ");fprintf(stream, "| ");
+        printf("%d ",stack[i]);fprintf(stream, "%d ",stack[i]);
+        printf("%d ",stack[i+1]);fprintf(stream, "%d ",stack[i+1]);
+        printf("%d ",stack[i+2]);fprintf(stream, "%d ",stack[i+2]);
+        printf("%d ",stack[i+3]);fprintf(stream, "%d ",stack[i+3]);
         tempSp = NOTSET;
     }
 
@@ -203,7 +206,9 @@ void fetch(void)
     //Print Values after execution of previous instruction and before fetch of next instruction
     if(firstInst == false)
     {
-        printf("%d\t%d\t%d\t", pc, bp, sp);printStack();printf("\n");
+        printf("%d\t%d\t%d\t", pc, bp, sp);fprintf(stream, "%d\t%d\t%d\t", pc, bp, sp);
+        printStack();
+        printf("\n"); fprintf(stream, "\n");
     }
 
     //Get Instruction Information
@@ -213,6 +218,7 @@ void fetch(void)
 
     //Print values before execution
     printf("%d\t%s\t%d\t%d\t\t", pc, translateOp(ir.op), ir.l, ir.m);
+    fprintf(stream, "%d\t%s\t%d\t%d\t\t", pc, translateOp(ir.op), ir.l, ir.m);
 
     //Increment PC by 1
     pc = pc +1;

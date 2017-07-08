@@ -1,0 +1,3 @@
+					PC	BP	SP	Stack
+Initial Values		0	1	0
+0	0	0
